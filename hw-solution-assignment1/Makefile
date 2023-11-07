@@ -25,7 +25,7 @@ run:	main.class
 	java $(classpathoption) main 03-trafiklys.hw  > 03.html
 	java $(classpathoption) main 04-von-Neumann.hw  > 04.html
 
-grun:	hwLexer.class hwParser.class 01-hello-world.hw
+grun:    hwLexer.class hwParser.class 01-hello-world.hw
     $(grun) hw start -gui -tokens 01-hello-world.hw
 
 clean:

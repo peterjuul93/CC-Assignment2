@@ -1,4 +1,7 @@
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.List;
+import java.util.ArrayList;
 
 public abstract class AST{
     public void error(String msg){
@@ -13,59 +16,26 @@ public abstract class AST{
    expressions with And (Conjunction), Or (Disjunction), and
    Not (Negation) */
 
-abstract class Expr extends AST{
-    // make eval
-    public abstract boolean eval(Environment env);
-}
+abstract class Expr extends AST{}
 
 class Conjunction extends Expr{
     Expr e1,e2;
-    Conjunction(Expr e1,Expr e2) {
-        this.e1=e1;
-        this.e2=e2;
-    }
-     @Override
-    public boolean eval(Environment env) {
-        return e1.eval(env) && e2.eval(env);
-    }
+    Conjunction(Expr e1,Expr e2){this.e1=e1; this.e2=e2;}
 }
 
-class Disjunction extends Expr {
-    Expr e1, e2;
-
-    Disjunction(Expr e1, Expr e2) {
-        this.e1 = e1;
-        this.e2 = e2;
-    }
-
-    @Override
-    public boolean eval(Environment env) {
-        return e1.eval(env) || e2.eval(env);
-    }
+class Disjunction extends Expr{
+    Expr e1,e2;
+    Disjunction(Expr e1,Expr e2){this.e1=e1; this.e2=e2;}
 }
 
-class Negation extends Expr {
+class Negation extends Expr{
     Expr e;
-
-    Negation(Expr e) {
-        this.e = e;
-    }
-
-    @Override
-    public boolean eval(Environment env) {
-        return !e.eval(env);
-    }
+    Negation(Expr e){this.e=e;}
 }
 
 class Signal extends Expr{
-    String varname; // a signal is just identified by a name
-    Signal(String varname){
-        this.varname = varname;}
-
-    @Override
-    public boolean eval(Environment env) {
-        return env.getVariable(varname);
-    }
+    String varname; // a signal is just identified by a name 
+    Signal(String varname){this.varname=varname;}
 }
 
 // Latches have an input and output signal
@@ -77,14 +47,6 @@ class Latch extends AST{
 	this.inputname=inputname;
 	this.outputname=outputname;
     }
-    public void initialize(Environment env) {
-        env.setVariable(outputname, false);
-    }
-
-    public void nextCycle(Environment env) {
-        Boolean inputValue = env.getVariable(inputname);
-        env.setVariable(outputname, inputValue);
-    }
 }
 
 // An Update is any of the lines " signal = expression "
@@ -93,13 +55,7 @@ class Latch extends AST{
 class Update extends AST{
     String name;
     Expr e;
-    Update(String name, Expr e){
-        this.e=e;
-        this.name=name;}
-    public void eval(Environment env) {
-        Boolean value = e.eval(env);
-        env.setVariable(name, value);
-    }
+    Update(String name, Expr e){this.e=e; this.name=name;}
 }
 
 /* A Trace is a signal and an array of Booleans, for instance each
@@ -109,22 +65,12 @@ class Update extends AST{
    assignment.
 */
 
-class Trace extends AST {
+class Trace extends AST{
     String signal;
     Boolean[] values;
-
-    Trace(String signal, Boolean[] values) {
-        this.signal = signal;
-        this.values = values;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder(signal + ": ");
-        for (Boolean value : values) {
-            builder.append(value ? "1" : "0").append(" ");
-        }
-        return builder.toString();
+    Trace(String signal, Boolean[] values){
+	this.signal=signal;
+	this.values=values;
     }
 }
 
@@ -147,27 +93,26 @@ class Trace extends AST {
    should also finally have the length simlength.
 */
 
-    class Circuit extends AST {
-        String name;
-        List<String> inputs;
-        List<String> outputs;
-        List<Latch> latches;
-        List<Update> updates;
-        List<Trace> siminputs;
-        List<Trace> simoutputs;
-        int simlength;
-
-        Circuit(String name,
-                List<String> inputs,
-                List<String> outputs,
-                List<Latch> latches,
-                List<Update> updates,
-                List<Trace> siminputs) {
-            this.name = name;
-            this.inputs = inputs;
-            this.outputs = outputs;
-            this.latches = latches;
-            this.updates = updates;
-            this.siminputs = siminputs;
-        }
+class Circuit extends AST{
+    String name; 
+    List<String> inputs;
+    List<String> outputs;
+    List<Latch>  latches;
+    List<Update> updates;
+    List<Trace>  siminputs;
+    List<Trace>  simoutputs;
+    int simlength;
+    Circuit(String name,
+	    List<String> inputs,
+	    List<String> outputs,
+	    List<Latch>  latches,
+	    List<Update> updates,
+	    List<Trace>  siminputs){
+	this.name=name;
+	this.inputs=inputs;
+	this.outputs=outputs;
+	this.latches=latches;
+	this.updates=updates;
+	this.siminputs=siminputs;
     }
+}

@@ -3,9 +3,7 @@ import java.util.Map.Entry;
 
 class Environment {
     private HashMap<String,Boolean> variableValues = new HashMap<String,Boolean>();
-    public Environment() {
-		variableValues = new HashMap<>();
-	}
+    public Environment() { }
     public void setVariable(String name, Boolean value) {
 	variableValues.put(name, value);
     }
@@ -27,7 +25,6 @@ class Environment {
 	    table += entry.getKey() + "\t-> " + entry.getValue() + "\n";
 	}
 	return table;
-    }
-
+    }   
 }
 
